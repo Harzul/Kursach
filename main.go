@@ -1,10 +1,8 @@
-//decode алгоритма Берлекэмпа-Мэсси или матричных операций
-
 package main
 
-import "fmt"
-
 func main() {
-	fmt.Println(FindPrimePoly())
+
+	var PrimePoly = FindPrimePoly()
+	InitTables(PrimePoly[0])
 
 }

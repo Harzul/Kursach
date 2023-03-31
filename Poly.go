@@ -55,3 +55,23 @@ func FindPrimePoly() []uint64 {
 
 	return correctPrimes
 }
+func InitTables(prim uint64) {
+	var (
+		fieldChar        = uint64(math.Pow(rootChar, degree) - 1)
+		gfExp            = make([]uint64, fieldChar*2)
+		gfLog            = make([]uint64, fieldChar+1)
+		x         uint64 = 1
+		i         uint64 = 0
+	)
+	for ; i < fieldChar; i++ {
+		gfExp[i] = x
+		gfLog[x] = i
+		x = GF.GfMultNoLUT(x, generator, prim, fieldChar+1)
+	}
+	i = fieldChar
+	for i = fieldChar; i < fieldChar*2; i++ {
+		gfExp[i] = gfExp[i-fieldChar]
+	}
+	GF.GfSetData(gfExp, gfLog, fieldChar)
+
+}
