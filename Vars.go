@@ -16,8 +16,8 @@ type AlgosGF interface {
 	Sub(x, y uint64) uint64
 	Mult(x, y uint64) uint64
 	Div(x, y uint64) uint64
-	Pow(x, y uint64) uint64
-	Inverse(x, y uint64) uint64
+	Pow(x, power uint64) uint64
+	Inverse(x uint64) uint64
 	GfMultNoLUT(x, y, prime, fc uint64) uint64
 	GfSetData(gfExp, gfLog []uint64, fieldChar uint64)
 }
