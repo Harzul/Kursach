@@ -17,12 +17,12 @@ def rs_correct_errata(msg_in, synd, err_pos, V, fcr=0):
     err_loc = rs_find_errata_locator(coef_pos, V)
     err_eval = rs_find_error_evaluator(synd[::-1], err_loc, len(err_loc) - 1,V)[::-1]
 
-    X = bytearray(len(coef_pos))
+    X = [0]*len(coef_pos)
     for i in range(len(coef_pos)):
         l = V.fieldChar - coef_pos[i]
         X[i] = GFM.gfPow(V.generator, -l, V)
 
-    E = bytearray(len(msg))
+    E = [0]*len(msg)
     X_len = len(X)
     for i, Xi in enumerate(X):
 
@@ -90,7 +90,7 @@ def rs_find_error_locator(synd, nsym, V, erase_loc=None, erase_count=0):
 def rs_find_errata_locator(e_pos, V):
     e_loc = [1]
     for i in e_pos:
-        e_loc = GFPM.gfPolyMul(e_loc, GFPM.gfPolyAdd(bytearray([1]), [GFM.gfPow(V.generator, i, V), 0]), V)
+        e_loc = GFPM.gfPolyMul(e_loc, GFPM.gfPolyAdd([1], [GFM.gfPow(V.generator, i, V), 0]), V)
     return e_loc
 
 
@@ -109,7 +109,7 @@ def rs_find_errors(err_loc, nmess, V):
     errs = len(err_loc) - 1
     if len(err_pos) != errs:
         raise ReedSolomonError("Too many (or few) errors found by Chien Search for the errata locator polynomial!")
-    return bytearray(err_pos)
+    return list(err_pos)
 
 
 def rs_forney_syndromes(synd, pos, nmess, V):
@@ -127,12 +127,12 @@ def rs_correct_msg(msg_in, nsym, V, fcr=0, erase_pos=None, only_erasures=False):
     if len(msg_in) > V.fieldChar:
         raise ValueError("Message is too long (%i when max is %i)" % (len(msg_in), V.fieldChar))
 
-    msg_out = bytearray(msg_in)
+    msg_out = list(msg_in)
     if erase_pos is None:
-        erase_pos = bytearray()
+        erase_pos = []
     else:
         if isinstance(erase_pos, list):
-            erase_pos = bytearray(erase_pos)
+            erase_pos = list(erase_pos)
         for e_pos in erase_pos:
             msg_out[e_pos] = 0
 
@@ -144,7 +144,7 @@ def rs_correct_msg(msg_in, nsym, V, fcr=0, erase_pos=None, only_erasures=False):
         return msg_out[:-nsym], msg_out[-nsym:], erase_pos  # no errors
 
     if only_erasures:
-        err_pos = bytearray()
+        err_pos = []
     else:
 
         fsynd = rs_forney_syndromes(synd, erase_pos, len(msg_out), V)
@@ -155,8 +155,7 @@ def rs_correct_msg(msg_in, nsym, V, fcr=0, erase_pos=None, only_erasures=False):
         if err_pos is None:
             raise ReedSolomonError("Could not locate error")
 
-    msg_out = rs_correct_errata(msg_out, synd, erase_pos + err_pos, V, fcr,
-                                )
+    msg_out = rs_correct_errata(msg_out, synd, erase_pos + err_pos, V, fcr)
     synd = rs_calc_syndromes(msg_out, nsym, V, fcr)
     if max(synd) > 0:
         raise ReedSolomonError("Could not correct message")

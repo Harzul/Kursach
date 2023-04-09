@@ -1,11 +1,11 @@
 class Variables:
-    def __init__(self, rootChar=2, degree=4, generator=2):
+    def __init__(self, rootChar=2, degree=8, generator=2):
         self.rootChar = rootChar
         self.degree = degree
         self.generator = generator
         self.fieldChar = rootChar ** degree - 1
-        self.gfExp = [0] * (self.fieldChar * 2)
-        self.gfLog = [0] * (self.fieldChar + 1)
+        self.gfExp = [0] * (256 * 2)
+        self.gfLog = [0] * (256)
 
     def initTables(self, prim=0x11d):
         x = 1
